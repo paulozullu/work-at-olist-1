@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from telephone_numbers.models import TelephoneNumber
+
+admin.site.register(TelephoneNumber)
+
+
