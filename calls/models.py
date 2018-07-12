@@ -24,5 +24,11 @@ class PhoneCall(models.Model):
         on_delete=models.PROTECT, null=True, default=None
     )
 
+    class Meta:
+        """
+        Certificate that each call has only one record of each type.
+        """
+        unique_together = ('type', 'call_id')
+
     def __str__(self):
         return "%d - %s" % (self.call_id, self.type)
