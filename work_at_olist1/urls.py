@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
+from calls.api.viewsets import PhoneCallViewSet
 from telephone_numbers.api.viewsets import TelephoneNumberViewSet
 
 router = routers.DefaultRouter()
 router.register(r'telephone_numbers', TelephoneNumberViewSet, base_name='TelephoneNumber')
+router.register(r'calls', PhoneCallViewSet, base_name='PhoneCall')
 
 urlpatterns = [
     path('', include(router.urls)),
