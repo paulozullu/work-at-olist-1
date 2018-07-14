@@ -10,3 +10,4 @@ class TelephoneNumberViewSet(ModelViewSet):
     """
     queryset = TelephoneNumber.objects.all()
     serializer_class = TelephoneNumberSerializer
+    http_method_names = ['get']
