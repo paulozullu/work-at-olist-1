@@ -7,8 +7,15 @@ from django.dispatch import receiver
 
 from telephone_numbers.models import TelephoneNumber
 
-STANDARD_PRICE_RULES = {'start': '6:00', 'finish': '22:00', 'standing_charge': 0.36, 'call_charge': 0.09}
-REDUCED_PRICE_RULES = {'start': '22:00', 'finish': '06:00', 'standing_charge': 0.36, 'call_charge': 0.00}
+STANDARD_PRICE_RULES = {
+    'start': '6:00', 'finish': '22:00',
+    'standing_charge': 0.36, 'call_charge': 0.09
+}
+
+REDUCED_PRICE_RULES = {
+    'start': '22:00', 'finish': '06:00',
+    'standing_charge': 0.36, 'call_charge': 0.00
+}
 
 
 class ChoiceEnum(Enum):
@@ -101,9 +108,9 @@ class Bill(models.Model):
     def __str__(self):
         return "Origin: {0} <> Destination: {1} <> Date: {2} <> " \
                "Time: {3} <> Duration: {4} <> Price: {5}".format(
-                self.origin, self.destination, self.call_start_date,
-                self.call_start_time, self.call_duration, self.call_price
-                )
+            self.origin, self.destination, self.call_start_date,
+            self.call_start_time, self.call_duration, self.call_price
+        )
 
     @staticmethod
     def get_duration(end_date, start_date):
