@@ -10,4 +10,4 @@ class TelephoneNumberSerializer(ModelSerializer):
 
     class Meta:
         model = TelephoneNumber
-        fields = '__all__'
+        fields = ('phone_number',)
