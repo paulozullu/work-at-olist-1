@@ -24,12 +24,11 @@ class BillSerializer(ModelSerializer):
     Serializer for Bill.
     """
 
-    origin = TelephoneNumberSerializer(many=False)
     destination = TelephoneNumberSerializer(many=False)
 
     class Meta:
         model = Bill
         fields = (
-            'origin', 'destination', 'call_id', 'call_start_date',
+            'destination', 'call_start_date',
             'call_start_time', 'call_duration', 'call_price'
         )
