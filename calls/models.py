@@ -66,6 +66,8 @@ def create_bill(sender, instance, **kwargs):
             bill.call_id = instance.call_id
             bill.call_start_date = start_call.timestamp.date()
             bill.call_start_time = start_call.timestamp.time()
+            bill.call_end_date = instance.timestamp.date()
+            bill.call_end_time = instance.timestamp.time()
             bill.call_duration = bill.get_duration(
                 instance.timestamp, start_call.timestamp
             )
@@ -89,6 +91,8 @@ class Bill(models.Model):
     call_id = models.IntegerField(unique=True, null=True)
     call_start_date = models.DateField()
     call_start_time = models.TimeField()
+    call_end_date = models.DateField()
+    call_end_time = models.TimeField()
     call_duration = models.DurationField(default=timedelta(seconds=0))
     call_price = models.DecimalField(
         max_digits=5, decimal_places=2, default=0.00
