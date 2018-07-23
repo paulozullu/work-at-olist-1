@@ -16,7 +16,6 @@ class PhoneCallViewSet(ModelViewSet):
     """
     queryset = PhoneCall.objects.order_by('call_id', '-type')
     serializer_class = PhoneCallSerializer
-    http_method_names = ['get']
 
 
 class BillViewSet(ModelViewSet):
