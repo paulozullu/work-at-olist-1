@@ -1,8 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from rest_framework import serializers, status
+from django.db.models import Q
+from rest_framework import serializers
 from rest_framework.exceptions import APIException
-from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
 from calls.models import PhoneCall, Bill
@@ -25,17 +25,26 @@ class PhoneCallSerializer(ModelSerializer):
         )
 
     def create(self, validated_data):
-        source_data = validated_data['source']
-        del validated_data['source']
-        source, created = TelephoneNumber.objects.get_or_create(
-            phone_number=source_data['phone_number']
-        )
+        """
+        Overrides ModelSerializer create method.
+            Args:
+                validated_data (dict): The data after validation.
 
-        destination_data = validated_data['destination']
-        del validated_data['destination']
-        destination, created = TelephoneNumber.objects.get_or_create(
-            phone_number=destination_data['phone_number']
-        )
+            Returns:
+                PhoneCall object created.
+        """
+        if validated_data['type'] == PhoneCall.CallTypes.start.value:
+            source_data = validated_data['source']
+            del validated_data['source']
+            source, created = TelephoneNumber.objects.get_or_create(
+                phone_number=source_data['phone_number']
+            )
+
+            destination_data = validated_data['destination']
+            del validated_data['destination']
+            destination, created = TelephoneNumber.objects.get_or_create(
+                phone_number=destination_data['phone_number']
+            )
 
         try:
             call = PhoneCall.objects.create(**validated_data)
@@ -51,7 +60,15 @@ class PhoneCallSerializer(ModelSerializer):
         return call
 
     def validate(self, data):
+        """
+        Check if the data is valid.
 
+            Args:
+                 data (dict): The data to be validated.
+
+            Returns:
+                Dict containing the validated data.
+        """
         if data['type'] == PhoneCall.CallTypes.end.value:
 
             try:
@@ -59,6 +76,8 @@ class PhoneCallSerializer(ModelSerializer):
                     call_id=data['call_id'],
                     type=PhoneCall.CallTypes.start.value
                 )
+
+                source = start_call.source
 
                 if start_call.timestamp > data['timestamp']:  # Check if end
                     # call time is bigger than start call
@@ -71,8 +90,13 @@ class PhoneCallSerializer(ModelSerializer):
                 message = 'You can\'t add an end call without a start call.'
                 raise serializers.ValidationError(message)
 
-        call_ids = PhoneCall.objects.filter(
-            source__phone_number=data['source']["phone_number"], timestamp__date=data['timestamp'].date()
+        elif data['type'] == PhoneCall.CallTypes.start.value:
+            source = data['source']['phone_number']
+
+        call_ids = Bill.objects.filter(
+            Q(call_start_date=data['timestamp'].date())
+            | Q(call_end_date=data['timestamp'].date()),
+            origin__phone_number=source
         ).values_list('call_id', flat=True).distinct()
 
         for call_id in call_ids:
@@ -80,13 +104,18 @@ class PhoneCallSerializer(ModelSerializer):
             start_time = PhoneCall.objects.filter(
                 call_id=call_id, type=PhoneCall.CallTypes.start.value
             ).values('timestamp')[0]
-            end_time = PhoneCall.objects.filter(
-                call_id=call_id, type=PhoneCall.CallTypes.end.value
-            ).values('timestamp')[0]
+
+            try:
+                end_time = PhoneCall.objects.filter(
+                    call_id=call_id, type=PhoneCall.CallTypes.end.value
+                ).values('timestamp')[0]
+            except IndexError:
+                end_time = None
 
             if start_time and end_time:
 
-                if start_time <= data['timestamp'] <= end_time:
+                if start_time['timestamp'] <= \
+                        data['timestamp'] <= end_time['timestamp']:
                     message = 'There\'s already another call in this time.'
                     raise serializers.ValidationError(message)
 
