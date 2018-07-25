@@ -91,12 +91,17 @@ class PhoneCallSerializer(ModelSerializer):
                 raise serializers.ValidationError(message)
 
         elif data['type'] == PhoneCall.CallTypes.start.value:
-            source = data['source']['phone_number']
-            destination = data['destination']['phone_number']
-
-            if source is None or destination is None:
+            try:
+                source = data['source']['phone_number']
+                destination = data['destination']['phone_number']
+            except KeyError:
                 message = 'Source number and destination number must ' \
                           'exist for start calls'
+                raise serializers.ValidationError(message)
+
+            if source == '' or destination == '':
+                message = 'Source number and destination number cannot ' \
+                          'be blank'
                 raise serializers.ValidationError(message)
 
         call_ids = Bill.objects.filter(
