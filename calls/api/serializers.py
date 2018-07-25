@@ -92,6 +92,12 @@ class PhoneCallSerializer(ModelSerializer):
 
         elif data['type'] == PhoneCall.CallTypes.start.value:
             source = data['source']['phone_number']
+            destination = data['destination']['phone_number']
+
+            if source is None or destination is None:
+                message = 'Source number and destination number must ' \
+                          'exist for start calls'
+                raise serializers.ValidationError(message)
 
         call_ids = Bill.objects.filter(
             Q(call_start_date=data['timestamp'].date())
