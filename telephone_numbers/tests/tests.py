@@ -3,7 +3,7 @@ from django.test import TestCase
 from telephone_numbers.models import TelephoneNumber as TelephoneNumberModel
 
 
-class TelephoneNumber(TestCase):
+class TelephoneNumberTestCase(TestCase):
     """
     Test module for TelephoneNumber model
     """
@@ -18,7 +18,7 @@ class TelephoneNumber(TestCase):
 
     def test_created(self):
         """
-        Telephone numbers are created
+        Test whether telephone numbers are created
         """
 
         number_123456789 = TelephoneNumberModel.objects.get(phone_number='123456789')
