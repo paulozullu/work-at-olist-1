@@ -24,6 +24,7 @@ class BillViewSet(ModelViewSet):
     """
     queryset = Bill.objects.order_by('call_id', 'call_start_date')
     serializer_class = BillSerializer
+    http_method_names = ['get']
 
     @action(methods=['get'], detail=False)
     def get_period_bill(self, request):
@@ -55,7 +56,7 @@ class BillViewSet(ModelViewSet):
 
             month, year = get_previous_month(date.today())
 
-        bills = bills.filter(call_end_date__month=month, call_end_date__year=year)
+        bills = bills.filter(call_end_date__month=month, call_end_date__year=year).order_by('call_start_time')
 
         ctx = {'request': request}
         serializer = BillSerializer(bills, context=ctx, many=True)
