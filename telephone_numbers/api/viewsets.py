@@ -6,7 +6,11 @@ from telephone_numbers.models import TelephoneNumber
 
 class TelephoneNumberViewSet(ModelViewSet):
     """
-    ViewSet for TelephoneNumber
+    retrieve:
+        Return a telephone number instance.
+
+    list:
+        Return all telephone numbers.
     """
     queryset = TelephoneNumber.objects.all()
     serializer_class = TelephoneNumberSerializer

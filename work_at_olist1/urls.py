@@ -13,19 +13,37 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import routers, permissions
 
 from calls.api.viewsets import PhoneCallViewSet, BillViewSet
 from telephone_numbers.api.viewsets import TelephoneNumberViewSet
 
+schema_view = get_schema_view(openapi.Info(
+    title="Work at Olist API",
+    default_version='v1',
+    description="API developed as an avaliation to work at Olist Company",
+    contact=openapi.Contact(email="paulozullu@gmail.com"),
+    license=openapi.License(name="BSD License"),
+),
+    validators=['flex', 'ssv'],
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 router = routers.DefaultRouter()
-router.register(r'telephone_numbers', TelephoneNumberViewSet, base_name='TelephoneNumber')
+router.register(r'telephone_numbers', TelephoneNumberViewSet,
+                base_name='TelephoneNumber')
 router.register(r'calls', PhoneCallViewSet, base_name='PhoneCall')
 router.register(r'bills', BillViewSet, base_name='Bill')
 
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
+    url(r'^docs/$', schema_view.with_ui(
+        'swagger', cache_timeout=None), name='docs'),
 ]
