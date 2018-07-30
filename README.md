@@ -35,13 +35,13 @@ To install this project, plese follow steps below:
     ```
     python manage.py migrate
     ```
-##Testing
+## Testing
 Access the project folder and run
 ```
 python manage.py test
 ```
 
-##Work Environment
+## Work Environment
 
 ### PC Specs (Asus K46CA):
 - Processor: Intel Core I7-3517U 
@@ -57,5 +57,5 @@ python manage.py test
 - PyCharm 2018.2 (Community Edition)
 Build #PC-182.3684.100, built on July 24, 2018
 
-##API Documentation
+## API Documentation
 To access the API Documentation, follow [this link](https://olist-calls.herokuapp.com/docs/)
