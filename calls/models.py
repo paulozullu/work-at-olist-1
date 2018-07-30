@@ -78,7 +78,7 @@ def create_bill(sender, instance, **kwargs):
             bill.call_duration = bill.get_duration(
                 instance.timestamp, start_call.timestamp
             )
-            bill.price = bill.get_price(
+            bill.call_price = bill.get_price(
                 instance.timestamp, start_call.timestamp
             )
             bill.save()
